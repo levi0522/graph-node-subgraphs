@@ -1,27 +1,3 @@
-enum Network {
-  ARBITRUM_ONE
-  ARWEAVE_MAINNET
-  AURORA
-  AVALANCHE
-  BOBA
-  BSC # aka BNB Chain
-  CELO
-  COSMOS
-  CRONOS
-  MAINNET # Ethereum Mainnet
-  FANTOM
-  FUSE
-  HARMONY
-  JUNO
-  MOONBEAM
-  MOONRIVER
-  NEAR_MAINNET
-  OPTIMISM
-  OSMOSIS
-  MATIC # aka Polygon
-  GNOSIS
-}
-
 type UniswapFactory @entity {
   # factory address
   id: ID!
