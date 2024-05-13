@@ -18,11 +18,7 @@ export let BI_18 = BigInt.fromI32(18)
 
 export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADDRESS))
 
-// rebass tokens, dont count in tracked volume
-export let UNTRACKED_PAIRS: string[] = ['0x9ea3b5b4ec044b70375236a281986106457b20ef']
-
-
-let STABLECOINS: string[] = [
+export let STABLECOINS: string[] = [
   '0x4200000000000000000000000000000000000006', // WETH
   '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb', // DAI
   '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // USDC
