@@ -1,0 +1,31 @@
+{
+  "name": "uniswap-v2-subgraph",
+  "version": "1.0.0",
+  "repository": "https://github.com/levi0522/v2-subgraph.git",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "codegen": "graph codegen --output-dir src/types/",
+    "build": "graph build",
+    "create-local": "graph create ethereum/uniswapv2 --node http://127.0.0.1:8020",
+    "deploy-local": "graph deploy ethereum/uniswapv2 --debug --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
+    "create-graph-node": "graph create base/uniswapv2 --node http://127.0.0.1:8020",
+    "deploy-graph-node": "graph deploy base/uniswapv2 --debug --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
+    "deploy": "graph deploy levi0522/uniswap-v2-test11 --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug --access-token c57fdc8933d474ad988250cf05efe951",
+    "deploy-staging": "graph deploy $THE_GRAPH_GITHUB_USER/$THE_GRAPH_SUBGRAPH_NAME /Uniswap --ipfs https://api.staging.thegraph.com/ipfs/ --node https://api.staging.thegraph.com/deploy/",
+    "watch-local": "graph deploy graphprotocol/Uniswap2 --watch --debug --node http://165.232.163.158:8020/ --ipfs http://localhost:5001"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.21.1",
+    "@graphprotocol/graph-ts": "^0.20.0",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "assemblyscript": "github:assemblyscript/assemblyscript",
+    "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
+    "prettier": "^1.18.2",
+    "typescript": "^3.5.2"
+  },
+  "dependencies": {
+    "ipfs-http-client": "^60.0.1"
+  }
+}
