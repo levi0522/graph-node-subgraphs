@@ -3,16 +3,16 @@ import { Pair, Token, Bundle } from '../types/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
 
-const WETH_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const USDC_WETH_PAIR = '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc' // created 10008355
-const DAI_WETH_PAIR = '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11' // created block 10042267
-const USDT_WETH_PAIR = '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' // created block 10093341
+const BSC_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+const USDC_BSC_PAIR = '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc' // created 10008355
+const DAI_BSC_PAIR = '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11' // created block 10042267
+const USDT_BSC_PAIR = '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852' // created block 10093341
 
-export function getEthPriceInUSD(): BigDecimal {
+export function getBSCPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
-  let daiPair = Pair.load(DAI_WETH_PAIR) // dai is token0
-  let usdcPair = Pair.load(USDC_WETH_PAIR) // usdc is token0
-  let usdtPair = Pair.load(USDT_WETH_PAIR) // usdt is token1
+  let daiPair = Pair.load(USDC_BSC_PAIR) // dai is token0
+  let usdcPair = Pair.load(DAI_BSC_PAIR) // usdc is token0
+  let usdtPair = Pair.load(USDT_BSC_PAIR) // usdt is token1
   //aaa
   // all 3 have been created
   if (daiPair !== null && usdcPair !== null && usdtPair !== null) {
@@ -64,7 +64,7 @@ let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('2')
  * @todo update to be derived ETH (add stablecoin estimates)
  **/
 export function findEthPerToken(token: Token): BigDecimal {
-  if (token.id == WETH_ADDRESS) {
+  if (token.id == BSC_ADDRESS) {
     return ONE_BD
   }
   // loop through whitelist and check if paired with any
@@ -198,21 +198,21 @@ export function getPairPriceUSD(
   }
   let bundle = Bundle.load('1')
   if (STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
-    if (token1.id == WETH_ADDRESS) {
+    if (token1.id == BSC_ADDRESS) {
       return pair.reserve1.div(pair.reserve0).times(bundle.ethPrice);
     }
     return pair.reserve1.div(pair.reserve0);
   }
 
   if (STABLECOINS.includes(token0.id) && !STABLECOINS.includes(token1.id)) {
-    if (token0.id == WETH_ADDRESS) {
+    if (token0.id == BSC_ADDRESS) {
       return pair.reserve0.div(pair.reserve1).times(bundle.ethPrice);
     }
     return pair.reserve0.div(pair.reserve1)
   }
 
   if (!STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
-    if (token1.id == WETH_ADDRESS) {
+    if (token1.id == BSC_ADDRESS) {
       return pair.reserve1.div(pair.reserve0).times(bundle.ethPrice);
     }
     return pair.reserve1.div(pair.reserve0)
