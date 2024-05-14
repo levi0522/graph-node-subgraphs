@@ -8,7 +8,7 @@ import { Factory as FactoryContract } from '../types/templates/Pair/Factory'
 import { TokenDefinition } from './tokenDefinition'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
-export const FACTORY_ADDRESS = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
+export const FACTORY_ADDRESS = '0x0c3c1c532F1e39EdF36BE9Fe0bE1410313E074Bf'
 
 export let ZERO_BI = BigInt.fromI32(0)
 export let ONE_BI = BigInt.fromI32(1)
@@ -18,15 +18,12 @@ export let BI_18 = BigInt.fromI32(18)
 
 export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADDRESS))
 
-// rebass tokens, dont count in tracked volume
-export let UNTRACKED_PAIRS: string[] = ['0x9ea3b5b4ec044b70375236a281986106457b20ef']
-
-
-let STABLECOINS: string[] = [
-  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
-  '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
-  '0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT
+// token where amounts should contribute to tracked volume and liquidity
+export let STABLECOINS: string[] = [
+  '0x4200000000000000000000000000000000000006', // WETH
+  '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', // DAI
+  '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', // USDC
+  '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', // USDT
 ]
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
@@ -121,17 +118,8 @@ export function fetchTokenName(tokenAddress: Address): string {
   return nameValue
 }
 
-// HOT FIX: we cant implement try catch for overflow catching so skip total supply parsing on these tokens that overflow 
-// TODO: find better way to handle overflow 
-let SKIP_TOTAL_SUPPLY: string[] = [
-  "0x0000000000bf2686748e1c0255036e7617e7e8a5",
-  "0x000000000000b91b6956fead1dda24c66aa6b972"
-]
 
 export function fetchTokenTotalSupply(tokenAddress: string, decimals: BigInt): BigDecimal {
-  if (SKIP_TOTAL_SUPPLY.includes(tokenAddress)) {
-    return ZERO_BD
-  }
   let contract = ERC20.bind(Address.fromString(tokenAddress))
   let totalSupplyResult = contract.try_totalSupply()
   if (!totalSupplyResult.reverted) {
@@ -142,9 +130,6 @@ export function fetchTokenTotalSupply(tokenAddress: string, decimals: BigInt): B
 }
 
 export function fetchTokenDecimals(tokenAddress: Address): BigInt {
-  if (SKIP_TOTAL_SUPPLY.includes(tokenAddress.toHexString())) {
-    return BigInt.fromI32(0)
-  }
   // static definitions overrides
   let staticDefinition = TokenDefinition.fromAddress(tokenAddress)
   if (staticDefinition != null) {

@@ -10,7 +10,7 @@ import {
   UniswapDayData,
   UniswapFactory
 } from '../types/schema'
-import { PairHourData } from './../types/schema'
+import { PairHourData } from '../types/schema'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './helpers'
 import {getPairPriceUSD} from "./pricing";
 

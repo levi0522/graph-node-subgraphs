@@ -5,7 +5,7 @@ import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, STABLECOINS } from './h
 import { log } from '@graphprotocol/graph-ts';
 
 const WETH_ADDRESS = '0x4200000000000000000000000000000000000006'
-const USDC_WETH_PAIR = '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc' // created 10008355
+const USDC_WETH_PAIR = '0x88a43bbdf9d098eec7bceda4e2494615dfd9bb9c' // created 10008355
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
