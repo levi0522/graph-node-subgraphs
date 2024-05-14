@@ -2,6 +2,7 @@
 import { Pair, Token, Bundle } from '../types/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, STABLECOINS } from './helpers'
+import { log} from '@graphprotocol/graph-ts'
 
 const WETH_ADDRESS = '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1'
 const USDC_WETH_PAIR = '0xF64Dfe17C8b87F012FCf50FbDA1D62bfA148366a'
@@ -14,14 +15,17 @@ export function getEthPriceInUSD(): BigDecimal {
   //aaa
   // all 3 have been created
   if (usdtPair !== null && usdcPair !== null) {
+    log.error("-----------1--------------",[])
     let totalLiquidityETH = usdtPair.reserve1.plus(usdcPair.reserve1)
     let daiWeight = usdtPair.reserve1.div(totalLiquidityETH)
     let usdcWeight = usdcPair.reserve1.div(totalLiquidityETH)
     return usdtPair.token0Price.times(daiWeight).plus(usdcPair.token0Price.times(usdcWeight))
     // USDC is the only pair so far
   } else if (usdcPair !== null) {
+    log.error("-----------2--------------"+usdcPair.token0Price.toString(),[])
     return usdcPair.token0Price
   } else {
+    log.error("-----------3--------------",[])
     return ZERO_BD
   }
 }
