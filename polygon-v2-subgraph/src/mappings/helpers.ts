@@ -20,9 +20,8 @@ export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADD
 
 // token where amounts should contribute to tracked volume and liquidity
 export let STABLECOINS: string[] = [
-  '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', // WETH
-  '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', // USDC
-  '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', // USDT
+  '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', // WMATIC
+  '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', // USDC
 ]
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
@@ -188,8 +187,8 @@ export function createLiquiditySnapshot(position: LiquidityPosition, event: ethe
   snapshot.block = event.block.number.toI32()
   snapshot.user = position.user
   snapshot.pair = position.pair
-  snapshot.token0PriceUSD = token0.derivedETH.times(bundle.ethPrice)
-  snapshot.token1PriceUSD = token1.derivedETH.times(bundle.ethPrice)
+  snapshot.token0PriceUSD = token0.derivedETH.times(bundle.maticPrice)
+  snapshot.token1PriceUSD = token1.derivedETH.times(bundle.maticPrice)
   snapshot.reserve0 = pair.reserve0
   snapshot.reserve1 = pair.reserve1
   snapshot.reserveUSD = pair.reserveUSD

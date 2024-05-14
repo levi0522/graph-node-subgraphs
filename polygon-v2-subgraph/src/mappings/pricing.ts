@@ -3,23 +3,15 @@ import { Pair, Token, Bundle } from '../types/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, STABLECOINS } from './helpers'
 
-const WETH_ADDRESS = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270'
-const USDC_WETH_PAIR = '0xF64Dfe17C8b87F012FCf50FbDA1D62bfA148366a'
-const USDT_WETH_PAIR = '0xd04Bc65744306A5C149414dd3CD5c984D9d3470d' // created block 10093341
+const WMATIC_ADDRESS = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270'
+const USDC_WETH_PAIR = '0x1f0c5400A3C7E357CC7c9A3D2f7Fe6DDF629D868'
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let usdcPair = Pair.load(USDC_WETH_PAIR) // usdc is token0
-  let usdtPair = Pair.load(USDT_WETH_PAIR) // usdt is token1
   //aaa
   // all 3 have been created
-  if (usdtPair !== null && usdcPair !== null) {
-    let totalLiquidityETH = usdtPair.reserve1.plus(usdcPair.reserve1)
-    let daiWeight = usdtPair.reserve1.div(totalLiquidityETH)
-    let usdcWeight = usdcPair.reserve1.div(totalLiquidityETH)
-    return usdtPair.token0Price.times(daiWeight).plus(usdcPair.token0Price.times(usdcWeight))
-    // USDC is the only pair so far
-  } else if (usdcPair !== null) {
+  if (usdcPair !== null) {
     return usdcPair.token0Price
   } else {
     return ZERO_BD
@@ -37,7 +29,7 @@ let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('2')
  * @todo update to be derived ETH (add stablecoin estimates)
  **/
 export function findEthPerToken(token: Token): BigDecimal {
-  if (token.id == WETH_ADDRESS) {
+  if (token.id == WMATIC_ADDRESS) {
     return ONE_BD
   }
   // loop through whitelist and check if paired with any
@@ -80,8 +72,8 @@ export function getTrackedVolumeUSD(
   pair: Pair
 ): BigDecimal {
   let bundle = Bundle.load('1')
-  let price0 = token0.derivedETH.times(bundle.ethPrice)
-  let price1 = token1.derivedETH.times(bundle.ethPrice)
+  let price0 = token0.derivedETH.times(bundle.maticPrice)
+  let price1 = token1.derivedETH.times(bundle.maticPrice)
 
   // if less than 5 LPs, require high minimum reserve amount amount or return 0
   if (pair.liquidityProviderCount.lt(BigInt.fromI32(5))) {
@@ -139,8 +131,8 @@ export function getTrackedLiquidityUSD(
   token1: Token
 ): BigDecimal {
   let bundle = Bundle.load('1')
-  let price0 = token0.derivedETH.times(bundle.ethPrice)
-  let price1 = token1.derivedETH.times(bundle.ethPrice)
+  let price0 = token0.derivedETH.times(bundle.maticPrice)
+  let price1 = token1.derivedETH.times(bundle.maticPrice)
 
   // both are whitelist tokens, take average of both amounts
   if (STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
@@ -171,22 +163,22 @@ export function getPairPriceUSD(
   }
   let bundle = Bundle.load('1')
   if (STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
-    if (token1.id == WETH_ADDRESS) {
-      return pair.reserve1.div(pair.reserve0).times(bundle.ethPrice);
+    if (token1.id == WMATIC_ADDRESS) {
+      return pair.reserve1.div(pair.reserve0).times(bundle.maticPrice);
     }
     return pair.reserve1.div(pair.reserve0);
   }
 
   if (STABLECOINS.includes(token0.id) && !STABLECOINS.includes(token1.id)) {
-    if (token0.id == WETH_ADDRESS) {
-      return pair.reserve0.div(pair.reserve1).times(bundle.ethPrice);
+    if (token0.id == WMATIC_ADDRESS) {
+      return pair.reserve0.div(pair.reserve1).times(bundle.maticPrice);
     }
     return pair.reserve0.div(pair.reserve1)
   }
 
   if (!STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
-    if (token1.id == WETH_ADDRESS) {
-      return pair.reserve1.div(pair.reserve0).times(bundle.ethPrice);
+    if (token1.id == WMATIC_ADDRESS) {
+      return pair.reserve1.div(pair.reserve0).times(bundle.maticPrice);
     }
     return pair.reserve1.div(pair.reserve0)
   }
