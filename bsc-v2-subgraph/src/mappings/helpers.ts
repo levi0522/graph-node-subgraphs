@@ -19,10 +19,9 @@ export let BI_18 = BigInt.fromI32(18)
 export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADDRESS))
 
 export let STABLECOINS: string[] = [
-  '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // WETH
-  '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
-  '0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT
+  '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // WBNB
+  '0x55d398326f99059fF775485246999027B3197955', // BUSD
+  '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', // USDC
 ]
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
@@ -189,8 +188,8 @@ export function createLiquiditySnapshot(position: LiquidityPosition, event: ethe
   snapshot.block = event.block.number.toI32()
   snapshot.user = position.user
   snapshot.pair = position.pair
-  snapshot.token0PriceUSD = token0.derivedETH.times(bundle.ethPrice)
-  snapshot.token1PriceUSD = token1.derivedETH.times(bundle.ethPrice)
+  snapshot.token0PriceUSD = token0.derivedETH.times(bundle.bnbPrice)
+  snapshot.token1PriceUSD = token1.derivedETH.times(bundle.bnbPrice)
   snapshot.reserve0 = pair.reserve0
   snapshot.reserve1 = pair.reserve1
   snapshot.reserveUSD = pair.reserveUSD
