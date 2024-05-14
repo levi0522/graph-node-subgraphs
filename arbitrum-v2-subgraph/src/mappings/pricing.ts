@@ -15,7 +15,7 @@ export function getEthPriceInUSD(): BigDecimal {
   //aaa
   // all 3 have been created
   if (usdtPair !== null && usdcPair !== null) {
-    let totalLiquidityETH = usdtPair.reserve1.plus(usdcPair.reserve1)
+    let totalLiquidityETH = usdtPair.reserve0.plus(usdcPair.reserve0)
     let daiWeight = usdtPair.reserve1.div(totalLiquidityETH)
     let usdcWeight = usdcPair.reserve1.div(totalLiquidityETH)
     return usdtPair.token0Price.times(daiWeight).plus(usdcPair.token0Price.times(usdcWeight))
@@ -30,7 +30,7 @@ export function getEthPriceInUSD(): BigDecimal {
 }
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
-let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('400000')
+let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('4000')
 
 // minimum liquidity for price to get tracked
 let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('2')

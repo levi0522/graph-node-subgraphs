@@ -4,7 +4,7 @@ import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, STABLECOINS } from './helpers'
 
 const WMATIC_ADDRESS = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270'
-const USDC_WETH_PAIR = '0x1f0c5400A3C7E357CC7c9A3D2f7Fe6DDF629D868'
+const USDC_WETH_PAIR = '0x1f0c5400a3c7e357cc7c9a3d2f7fe6ddf629d868'
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
@@ -19,7 +19,7 @@ export function getEthPriceInUSD(): BigDecimal {
 }
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
-let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('400000')
+let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('4000')
 
 // minimum liquidity for price to get tracked
 let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('2')

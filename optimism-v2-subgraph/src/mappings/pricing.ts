@@ -4,30 +4,22 @@ import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, STABLECOINS } from './helpers'
 
 const WETH_ADDRESS = '0x4200000000000000000000000000000000000006'
-const USDC_WETH_PAIR = '0xF64Dfe17C8b87F012FCf50FbDA1D62bfA148366a'
-const USDT_WETH_PAIR = '0xd04Bc65744306A5C149414dd3CD5c984D9d3470d' // created block 10093341
+const USDC_WETH_PAIR = '0x4C43646304492A925E335f2b6d840C1489f17815'
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let usdcPair = Pair.load(USDC_WETH_PAIR) // usdc is token0
-  let usdtPair = Pair.load(USDT_WETH_PAIR) // usdt is token1
   //aaa
   // all 3 have been created
-  if (usdtPair !== null && usdcPair !== null) {
-    let totalLiquidityETH = usdtPair.reserve1.plus(usdcPair.reserve1)
-    let daiWeight = usdtPair.reserve1.div(totalLiquidityETH)
-    let usdcWeight = usdcPair.reserve1.div(totalLiquidityETH)
-    return usdtPair.token0Price.times(daiWeight).plus(usdcPair.token0Price.times(usdcWeight))
-    // USDC is the only pair so far
-  } else if (usdcPair !== null) {
-    return usdcPair.token0Price
+  if (usdcPair !== null) {
+    return usdcPair.token1Price
   } else {
     return ZERO_BD
   }
 }
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
-let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('400000')
+let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('400')
 
 // minimum liquidity for price to get tracked
 let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('2')

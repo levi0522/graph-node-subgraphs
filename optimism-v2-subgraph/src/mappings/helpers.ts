@@ -21,9 +21,7 @@ export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADD
 // token where amounts should contribute to tracked volume and liquidity
 export let STABLECOINS: string[] = [
   '0x4200000000000000000000000000000000000006', // WETH
-  '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', // DAI
   '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', // USDC
-  '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', // USDT
 ]
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
