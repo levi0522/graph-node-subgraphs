@@ -172,6 +172,11 @@ export function handleNewPair(event: PairCreated): void {
       pair.save()
     }
   }
+
+  let skipBlock1 = BigInt.fromI32(parseInt("19898092") as i32)
+  if(event.block.number <  skipBlock1){
+    return
+  }
   factory.pairCount = factory.pairCount + 1
   factory.save()
   // create the tokens
