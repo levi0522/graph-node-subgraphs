@@ -258,7 +258,7 @@ export function handleSync(event: Sync): void {
   pair.priceUSD = getPairPriceUSD(token0 as Token, token1 as Token, pair as Pair)
 
   pair.save()
-
+  
   // update ETH price now that reserves could have changed
   let bundle = Bundle.load('1')
   bundle.ethPrice = getEthPriceInUSD()

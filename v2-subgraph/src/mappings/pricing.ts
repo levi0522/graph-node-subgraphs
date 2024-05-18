@@ -18,6 +18,7 @@ export function getEthPriceInUSD(): BigDecimal {
   // all 3 have been created
   if (daiPair !== null && usdcPair !== null && usdtPair !== null) {
     let totalLiquidityETH = daiPair.reserve1.plus(usdcPair.reserve1).plus(usdtPair.reserve0)
+    log.error("--------11111----------"+totalLiquidityETH.toString(),[])
     let daiWeight = daiPair.reserve1.div(totalLiquidityETH)
     let usdcWeight = usdcPair.reserve1.div(totalLiquidityETH)
     let usdtWeight = usdtPair.reserve0.div(totalLiquidityETH)
@@ -28,11 +29,13 @@ export function getEthPriceInUSD(): BigDecimal {
     // dai and USDC have been created
   } else if (daiPair !== null && usdcPair !== null) {
     let totalLiquidityETH = daiPair.reserve1.plus(usdcPair.reserve1)
+    log.error("--------22222----------"+totalLiquidityETH.toString(),[])
     let daiWeight = daiPair.reserve1.div(totalLiquidityETH)
     let usdcWeight = usdcPair.reserve1.div(totalLiquidityETH)
     return daiPair.token0Price.times(daiWeight).plus(usdcPair.token0Price.times(usdcWeight))
     // USDC is the only pair so far
   } else if (usdcPair !== null) {
+    log.error("--------333333----------",[])
     return usdcPair.token0Price
   } else {
     return ZERO_BD
