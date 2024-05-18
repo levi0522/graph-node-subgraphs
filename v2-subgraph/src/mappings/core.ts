@@ -250,15 +250,15 @@ export function handleSync(event: Sync): void {
     pair.initialReserve1 = pair.reserve1
   }
 
-  if (pair.reserve1.notEqual(ZERO_BD)) pair.token0Price = pair.reserve1.div(pair.reserve0)
+  if (pair.reserve0.notEqual(ZERO_BD)) pair.token0Price = pair.reserve1.div(pair.reserve0)
   else pair.token0Price = ZERO_BD
-  if (pair.reserve0.notEqual(ZERO_BD)) pair.token1Price = pair.reserve0.div(pair.reserve1)
+  if (pair.reserve1.notEqual(ZERO_BD)) pair.token1Price = pair.reserve0.div(pair.reserve1)
   else pair.token1Price = ZERO_BD
 
   pair.priceUSD = getPairPriceUSD(token0 as Token, token1 as Token, pair as Pair)
 
   pair.save()
-  
+
   // update ETH price now that reserves could have changed
   let bundle = Bundle.load('1')
   bundle.ethPrice = getEthPriceInUSD()
