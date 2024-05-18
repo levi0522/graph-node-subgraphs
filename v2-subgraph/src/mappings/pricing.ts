@@ -204,21 +204,21 @@ export function getPairPriceUSD(
   }
   let bundle = Bundle.load('1')
   if (STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
-    if (token1.id == WETH_ADDRESS) {
+    if (token1.id == WETH_ADDRESS && bundle.ethPrice.notEqual(ZERO_BD)) {
       return pair.reserve1.div(pair.reserve0).times(bundle.ethPrice);
     }
     return pair.reserve1.div(pair.reserve0);
   }
 
   if (STABLECOINS.includes(token0.id) && !STABLECOINS.includes(token1.id)) {
-    if (token0.id == WETH_ADDRESS) {
+    if (token0.id == WETH_ADDRESS && bundle.ethPrice.notEqual(ZERO_BD)) {
       return pair.reserve0.div(pair.reserve1).times(bundle.ethPrice);
     }
     return pair.reserve0.div(pair.reserve1)
   }
 
   if (!STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
-    if (token1.id == WETH_ADDRESS) {
+    if (token1.id == WETH_ADDRESS && bundle.ethPrice.notEqual(ZERO_BD)) {
       return pair.reserve1.div(pair.reserve0).times(bundle.ethPrice);
     }
     return pair.reserve1.div(pair.reserve0)
