@@ -20,7 +20,7 @@ export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADD
 
 // token where amounts should contribute to tracked volume and liquidity
 export let STABLECOINS: string[] = [
-  '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', // WMATIC
+  '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', // WMATIC
   '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', // USDC
 ]
 

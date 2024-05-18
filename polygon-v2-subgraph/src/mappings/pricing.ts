@@ -1,19 +1,22 @@
 /* eslint-disable prefer-const */
 import { Pair, Token, Bundle } from '../types/schema'
-import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
+import { BigDecimal, Address, BigInt, log } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, STABLECOINS } from './helpers'
 
 const WMATIC_ADDRESS = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270'
 const USDC_WETH_PAIR = '0x1f0c5400a3c7e357cc7c9a3d2f7fe6ddf629d868'
 
 export function getEthPriceInUSD(): BigDecimal {
+  log.error("---------getEthPriceInUSD---------------", [])
   // fetch eth prices for each stablecoin
   let usdcPair = Pair.load(USDC_WETH_PAIR) // usdc is token0
   //aaa
   // all 3 have been created
   if (usdcPair !== null) {
+    log.error("---------usdcPair !== null-----------------"+usdcPair.token0Price.toString(),[])
     return usdcPair.token0Price
   } else {
+    log.error("---------usdcPair == null-----------------", [])
     return ZERO_BD
   }
 }
@@ -158,26 +161,39 @@ export function getPairPriceUSD(
   token1: Token,
   pair: Pair,
 ): BigDecimal {
+  log.error("-------------getPairPriceUSD---------------",[])
   if (pair.reserve1.equals(ZERO_BD) || pair.reserve0.equals(ZERO_BD)) {
     return ZERO_BD;
   }
+  log.error("-------------getPairPriceUSD 11 111---------------",[])
+  log.error("-------------reserve1---------------"+pair.reserve1.toString(),[])
+  log.error("-------------reserve0---------------"+pair.reserve0.toString(),[])
+  log.error("-------------token0---------------"+token0.id.toString(),[])
+  log.error("-------------token1---------------"+token1.id.toString(),[])
   let bundle = Bundle.load('1')
+  log.error("--------------bundle.maticPrice-----------------"+bundle.maticPrice.toString(),[])
   if (STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
+    log.error("-------------getPairPriceUSD 2222---------------",[])
     if (token1.id == WMATIC_ADDRESS) {
+      log.error("-------------getPairPriceUSD 2222 WMATIC_ADDRESS---------------",[])
       return pair.reserve1.div(pair.reserve0).times(bundle.maticPrice);
     }
     return pair.reserve1.div(pair.reserve0);
   }
 
   if (STABLECOINS.includes(token0.id) && !STABLECOINS.includes(token1.id)) {
+    log.error("-------------getPairPriceUSD 33333---------------",[])
     if (token0.id == WMATIC_ADDRESS) {
+      log.error("-------------getPairPriceUSD 33333 WMATIC_ADDRESS---------------",[])
       return pair.reserve0.div(pair.reserve1).times(bundle.maticPrice);
     }
     return pair.reserve0.div(pair.reserve1)
   }
 
   if (!STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
+    log.error("-------------getPairPriceUSD 44444---------------",[])
     if (token1.id == WMATIC_ADDRESS) {
+      log.error("-------------getPairPriceUSD 44444 WMATIC_ADDRESS---------------",[])
       return pair.reserve1.div(pair.reserve0).times(bundle.maticPrice);
     }
     return pair.reserve1.div(pair.reserve0)
