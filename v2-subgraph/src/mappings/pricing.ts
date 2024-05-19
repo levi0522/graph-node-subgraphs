@@ -18,6 +18,9 @@ export function getEthPriceInUSD(): BigDecimal {
   // all 3 have been created
   if (daiPair !== null && usdcPair !== null && usdtPair !== null) {
     let totalLiquidityETH = daiPair.reserve1.plus(usdcPair.reserve1).plus(usdtPair.reserve0)
+    if(totalLiquidityETH.equals(ZERO_BD)){
+      return ZERO_BD
+    }
     let daiWeight = daiPair.reserve1.div(totalLiquidityETH)
     let usdcWeight = usdcPair.reserve1.div(totalLiquidityETH)
     let usdtWeight = usdtPair.reserve0.div(totalLiquidityETH)
@@ -28,6 +31,9 @@ export function getEthPriceInUSD(): BigDecimal {
     // dai and USDC have been created
   } else if (daiPair !== null && usdcPair !== null) {
     let totalLiquidityETH = daiPair.reserve1.plus(usdcPair.reserve1)
+    if(totalLiquidityETH.equals(ZERO_BD)){
+      return ZERO_BD
+    }
     let daiWeight = daiPair.reserve1.div(totalLiquidityETH)
     let usdcWeight = usdcPair.reserve1.div(totalLiquidityETH)
     return daiPair.token0Price.times(daiWeight).plus(usdcPair.token0Price.times(usdcWeight))
@@ -107,48 +113,52 @@ export function getTrackedVolumeUSD(
   token1: Token,
   pair: Pair
 ): BigDecimal {
+  let bundle = Bundle.load('1')
+  let price0 = token0.derivedETH.times(bundle.ethPrice)
+  let price1 = token1.derivedETH.times(bundle.ethPrice)
+
   // dont count tracked volume on these pairs - usually rebass tokens
   if (UNTRACKED_PAIRS.includes(pair.id)) {
     return ZERO_BD
   }
 
   // if less than 5 LPs, require high minimum reserve amount amount or return 0
-  // if (pair.liquidityProviderCount.lt(BigInt.fromI32(5))) {
-  //   let reserve0USD = pair.reserve0.times(pair.token0Price)
-  //   let reserve1USD = pair.reserve1.times(pair.token1Price)
-  //   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-  //     if (reserve0USD.plus(reserve1USD).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-  //       return ZERO_BD
-  //     }
-  //   }
-  //   if (WHITELIST.includes(token0.id) && !WHITELIST.includes(token1.id)) {
-  //     if (reserve0USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-  //       return ZERO_BD
-  //     }
-  //   }
-  //   if (!WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-  //     if (reserve1USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-  //       return ZERO_BD
-  //     }
-  //   }
-  // }
+  if (pair.liquidityProviderCount.lt(BigInt.fromI32(5))) {
+    let reserve0USD = pair.reserve0.times(price0)
+    let reserve1USD = pair.reserve1.times(price1)
+    if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
+      if (reserve0USD.plus(reserve1USD).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+        return ZERO_BD
+      }
+    }
+    if (WHITELIST.includes(token0.id) && !WHITELIST.includes(token1.id)) {
+      if (reserve0USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+        return ZERO_BD
+      }
+    }
+    if (!WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
+      if (reserve1USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+        return ZERO_BD
+      }
+    }
+  }
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
     return tokenAmount0
-      .times(pair.token0Price)
-      .plus(tokenAmount1.times(pair.token1Price))
+      .times(price0)
+      .plus(tokenAmount1.times(price1))
       .div(BigDecimal.fromString('2'))
   }
 
   // take full value of the whitelisted token amount
   if (WHITELIST.includes(token0.id) && !WHITELIST.includes(token1.id)) {
-    return tokenAmount0.times(pair.token0Price)
+    return tokenAmount0.times(price0)
   }
 
   // take full value of the whitelisted token amount
   if (!WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-    return tokenAmount1.times(pair.token1Price)
+    return tokenAmount1.times(price1)
   }
 
   // neither token is on white list, tracked volume is 0
@@ -200,21 +210,21 @@ export function getPairPriceUSD(
   }
   let bundle = Bundle.load('1')
   if (STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
-    if (token1.id == WETH_ADDRESS && bundle.ethPrice.notEqual(ZERO_BD)) {
+    if (token1.id == WETH_ADDRESS) {
       return pair.reserve1.div(pair.reserve0).times(bundle.ethPrice);
     }
     return pair.reserve1.div(pair.reserve0);
   }
 
   if (STABLECOINS.includes(token0.id) && !STABLECOINS.includes(token1.id)) {
-    if (token0.id == WETH_ADDRESS && bundle.ethPrice.notEqual(ZERO_BD)) {
+    if (token0.id == WETH_ADDRESS) {
       return pair.reserve0.div(pair.reserve1).times(bundle.ethPrice);
     }
     return pair.reserve0.div(pair.reserve1)
   }
 
   if (!STABLECOINS.includes(token0.id) && STABLECOINS.includes(token1.id)) {
-    if (token1.id == WETH_ADDRESS && bundle.ethPrice.notEqual(ZERO_BD)) {
+    if (token1.id == WETH_ADDRESS) {
       return pair.reserve1.div(pair.reserve0).times(bundle.ethPrice);
     }
     return pair.reserve1.div(pair.reserve0)
