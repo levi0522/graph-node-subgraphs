@@ -113,25 +113,25 @@ export function getTrackedVolumeUSD(
   }
 
   // if less than 5 LPs, require high minimum reserve amount amount or return 0
-  if (pair.liquidityProviderCount.lt(BigInt.fromI32(5))) {
-    let reserve0USD = pair.reserve0.times(pair.token0Price)
-    let reserve1USD = pair.reserve1.times(pair.token1Price)
-    if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-      if (reserve0USD.plus(reserve1USD).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-        return ZERO_BD
-      }
-    }
-    if (WHITELIST.includes(token0.id) && !WHITELIST.includes(token1.id)) {
-      if (reserve0USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-        return ZERO_BD
-      }
-    }
-    if (!WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-      if (reserve1USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-        return ZERO_BD
-      }
-    }
-  }
+  // if (pair.liquidityProviderCount.lt(BigInt.fromI32(5))) {
+  //   let reserve0USD = pair.reserve0.times(pair.token0Price)
+  //   let reserve1USD = pair.reserve1.times(pair.token1Price)
+  //   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
+  //     if (reserve0USD.plus(reserve1USD).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+  //       return ZERO_BD
+  //     }
+  //   }
+  //   if (WHITELIST.includes(token0.id) && !WHITELIST.includes(token1.id)) {
+  //     if (reserve0USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+  //       return ZERO_BD
+  //     }
+  //   }
+  //   if (!WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
+  //     if (reserve1USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+  //       return ZERO_BD
+  //     }
+  //   }
+  // }
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
