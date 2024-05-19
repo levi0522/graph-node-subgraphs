@@ -68,7 +68,7 @@ export function handleNewPair(event: PairCreated): void {
     bundle.ethPrice = ZERO_BD
     bundle.save()
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 1; i++) {
       let token0Address: string = token0s[i];
       let token1Address: string = token1s[i];
       let pairAddress: string = pairs[i];
