@@ -180,7 +180,7 @@ export function handleNewPair(event: PairCreated): void {
   let token1 = Token.load(event.params.token1.toHexString())
 
   for (let i = 0; i < SKIP_BLOCKS.length; ++i) {
-    let skipBlock = BigInt.fromI32(parseInt(SKIP_BLOCKS[i]) as i32)
+    let skipBlock = BigInt.fromString(SKIP_BLOCKS[i])
     if (event.block.number == skipBlock) {
       return
     }

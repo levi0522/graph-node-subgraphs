@@ -281,6 +281,12 @@ type PairFiveMinutesData @entity {
   basePriceUSD: BigDecimal!
   buyVolumeUSD: BigDecimal!
   sellVolumeUSD: BigDecimal!
+
+  time: Int!
+  low: BigDecimal!
+  height: BigDecimal!
+  open: BigDecimal!
+  close: BigDecimal!
 }
 
 type PairSixHourData @entity {
@@ -312,6 +318,12 @@ type PairSixHourData @entity {
   basePriceUSD: BigDecimal!
   buyVolumeUSD: BigDecimal!
   sellVolumeUSD: BigDecimal!
+
+  time: Int!
+  low: BigDecimal!
+  height: BigDecimal!
+  open: BigDecimal!
+  close: BigDecimal!
 }
 
 type PairHourData @entity {
@@ -343,6 +355,12 @@ type PairHourData @entity {
   basePriceUSD: BigDecimal!
   buyVolumeUSD: BigDecimal!
   sellVolumeUSD: BigDecimal!
+
+  time: Int!
+  low: BigDecimal!
+  height: BigDecimal!
+  open: BigDecimal!
+  close: BigDecimal!
 }
 
 # Data accumulated and condensed into day stats for each exchange
@@ -377,6 +395,12 @@ type PairDayData @entity {
   basePriceUSD: BigDecimal!
   buyVolumeUSD: BigDecimal!
   sellVolumeUSD: BigDecimal!
+
+  time: Int!
+  low: BigDecimal!
+  height: BigDecimal!
+  open: BigDecimal!
+  close: BigDecimal!
 }
 
 type TokenDayData @entity {

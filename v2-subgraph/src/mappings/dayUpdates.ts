@@ -40,9 +40,9 @@ export function updateUniswapDayData(event: ethereum.Event): UniswapDayData {
     uniswapDayData.dailyVolumeUntracked = ZERO_BD
   }
 
-  uniswapDayData.totalLiquidityUSD = uniswap.totalLiquidityUSD
-  uniswapDayData.totalLiquidityETH = uniswap.totalLiquidityETH
-  uniswapDayData.txCount = uniswap.txCount
+  uniswapDayData.totalLiquidityUSD = uniswap!.totalLiquidityUSD
+  uniswapDayData.totalLiquidityETH = uniswap!.totalLiquidityETH
+  uniswapDayData.txCount = uniswap!.txCount
   uniswapDayData.save()
 
   return uniswapDayData as UniswapDayData
@@ -65,14 +65,14 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
       .concat(BigInt.fromI32(previousDayID).toString());
   let previousPairDayData = PairDayData.load(previousDayPairID);
 
-  let token0 = Token.load(pair.token0)
-  let token1 = Token.load(pair.token1)
+  let token0 = Token.load(pair!.token0)
+  let token1 = Token.load(pair!.token1)
 
   if (pairDayData === null) {
     pairDayData = new PairDayData(dayPairID)
     pairDayData.startUnix = dayStartTimestamp
-    pairDayData.token0 = pair.token0
-    pairDayData.token1 = pair.token1
+    pairDayData.token0 = pair!.token0
+    pairDayData.token1 = pair!.token1
     pairDayData.pair = event.address.toHexString()
     pairDayData.volumeToken0 = ZERO_BD
     pairDayData.volumeToken1 = ZERO_BD
@@ -84,11 +84,21 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
     pairDayData.priceChange = ZERO_BD
     pairDayData.buyTxs = ZERO_BI
     pairDayData.sellTxs = ZERO_BI
-    pairDayData.basePriceUSD = pair.priceUSD
+    pairDayData.basePriceUSD = pair!.priceUSD
     pairDayData.buyVolumeUSD = ZERO_BD
     pairDayData.sellVolumeUSD = ZERO_BD
+
+    pairDayData.time = dayStartTimestamp
+    pairDayData.low = pair!.priceUSD
+    pairDayData.height = pair!.priceUSD
+    if(previousPairDayData !== null){
+      pairDayData.open = previousPairDayData!.close
+    }else{
+      pairDayData.open = pair!.priceUSD
+    }
+    pairDayData.close = pair!.priceUSD
   }
-  pairDayData.priceUSD = pair.priceUSD
+  pairDayData.priceUSD = pair!.priceUSD
 
   if (previousPairDayData !== null) {
     let previousDailyVolumeUSD = previousPairDayData.volumeUSD;
@@ -103,10 +113,20 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
     pairDayData.priceChange = calculateChange(pairDayData.basePriceUSD, pairDayData.priceUSD)
   }
 
-  pairDayData.totalSupply = pair.totalSupply
-  pairDayData.reserve0 = pair.reserve0
-  pairDayData.reserve1 = pair.reserve1
-  pairDayData.reserveUSD = pair.reserveUSD
+  if (pair!.priceUSD < pairDayData.low){
+    pairDayData.low = pair!.priceUSD
+  }
+
+  if (pair!.priceUSD > pairDayData.height){
+    pairDayData.height = pair!.priceUSD
+  }
+
+  pairDayData.close = pair!.priceUSD
+
+  pairDayData.totalSupply = pair!.totalSupply
+  pairDayData.reserve0 = pair!.reserve0
+  pairDayData.reserve1 = pair!.reserve1
+  pairDayData.reserveUSD = pair!.reserveUSD
   pairDayData.txns = pairDayData.txns.plus(ONE_BI)
   pairDayData.save()
 
@@ -131,8 +151,8 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
       .concat(BigInt.fromI32(previousHourID).toString());
   let previousPairHourData = PairHourData.load(previousHourPairID);
 
-  let token0 = Token.load(pair.token0)
-  let token1 = Token.load(pair.token1)
+  let token0 = Token.load(pair!.token0)
+  let token1 = Token.load(pair!.token1)
 
   if (pairHourData === null) {
     pairHourData = new PairHourData(hourPairID)
@@ -148,12 +168,21 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
     pairHourData.priceChange = ZERO_BD
     pairHourData.buyTxs = ZERO_BI
     pairHourData.sellTxs = ZERO_BI
-    pairHourData.basePriceUSD = pair.priceUSD
+    pairHourData.basePriceUSD = pair!.priceUSD
     pairHourData.buyVolumeUSD = ZERO_BD
     pairHourData.sellVolumeUSD = ZERO_BD
+    pairHourData.time = hourStartUnix
+    pairHourData.low = pair!.priceUSD
+    pairHourData.height = pair!.priceUSD
+    if(previousPairHourData !== null){
+      pairHourData.open = previousPairHourData!.close
+    }else{
+      pairHourData.open = pair!.priceUSD
+    }
+    pairHourData.close = pair!.priceUSD
   }
 
-  pairHourData.priceUSD = pair.priceUSD
+  pairHourData.priceUSD = pair!.priceUSD
 
   if (previousPairHourData !== null) {
     let previousHourVolumeUSD = previousPairHourData.volumeUSD;
@@ -168,10 +197,20 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
     pairHourData.priceChange = calculateChange(pairHourData.basePriceUSD, pairHourData.priceUSD)
   }
 
-  pairHourData.totalSupply = pair.totalSupply
-  pairHourData.reserve0 = pair.reserve0
-  pairHourData.reserve1 = pair.reserve1
-  pairHourData.reserveUSD = pair.reserveUSD
+  if (pair!.priceUSD < pairHourData.low){
+    pairHourData.low = pair!.priceUSD
+  }
+
+  if (pair!.priceUSD > pairHourData.height){
+    pairHourData.height = pair!.priceUSD
+  }
+
+  pairHourData.close = pair!.priceUSD
+
+  pairHourData.totalSupply = pair!.totalSupply
+  pairHourData.reserve0 = pair!.reserve0
+  pairHourData.reserve1 = pair!.reserve1
+  pairHourData.reserveUSD = pair!.reserveUSD
   pairHourData.txns = pairHourData.txns.plus(ONE_BI)
   pairHourData.save()
 
@@ -196,8 +235,8 @@ export function updatePairSixHourData(event: ethereum.Event): PairSixHourData {
       .concat(BigInt.fromI32(previousSixHourID).toString());
   let previousPairSixHourData = PairSixHourData.load(previousSixHourPairID);
 
-  let token0 = Token.load(pair.token0)
-  let token1 = Token.load(pair.token1)
+  let token0 = Token.load(pair!.token0)
+  let token1 = Token.load(pair!.token1)
 
   if (pairSixHourData === null) {
     pairSixHourData = new PairSixHourData(sixHourPairID)
@@ -213,12 +252,22 @@ export function updatePairSixHourData(event: ethereum.Event): PairSixHourData {
     pairSixHourData.priceChange = ZERO_BD
     pairSixHourData.buyTxs = ZERO_BI
     pairSixHourData.sellTxs = ZERO_BI
-    pairSixHourData.basePriceUSD = pair.priceUSD
+    pairSixHourData.basePriceUSD = pair!.priceUSD
     pairSixHourData.buyVolumeUSD = ZERO_BD
     pairSixHourData.sellVolumeUSD = ZERO_BD
+
+    pairSixHourData.time = sixHourStartUnix
+    pairSixHourData.low = pair!.priceUSD
+    pairSixHourData.height = pair!.priceUSD
+    if(previousPairSixHourData !== null){
+      pairSixHourData.open = previousPairSixHourData!.close
+    }else{
+      pairSixHourData.open = pair!.priceUSD
+    }
+    pairSixHourData.close = pair!.priceUSD
   }
 
-  pairSixHourData.priceUSD = pair.priceUSD
+  pairSixHourData.priceUSD = pair!.priceUSD
 
   if (previousPairSixHourData !== null) {
     let previousSixHourVolumeUSD = previousPairSixHourData.volumeUSD;
@@ -233,10 +282,20 @@ export function updatePairSixHourData(event: ethereum.Event): PairSixHourData {
     pairSixHourData.priceChange = calculateChange(pairSixHourData.basePriceUSD, pairSixHourData.priceUSD)
   }
 
-  pairSixHourData.totalSupply = pair.totalSupply
-  pairSixHourData.reserve0 = pair.reserve0
-  pairSixHourData.reserve1 = pair.reserve1
-  pairSixHourData.reserveUSD = pair.reserveUSD
+  if (pair!.priceUSD < pairSixHourData.low){
+    pairSixHourData.low = pair!.priceUSD
+  }
+
+  if (pair!.priceUSD > pairSixHourData.height){
+    pairSixHourData.height = pair!.priceUSD
+  }
+
+  pairSixHourData.close = pair!.priceUSD
+
+  pairSixHourData.totalSupply = pair!.totalSupply
+  pairSixHourData.reserve0 = pair!.reserve0
+  pairSixHourData.reserve1 = pair!.reserve1
+  pairSixHourData.reserveUSD = pair!.reserveUSD
   pairSixHourData.txns = pairSixHourData.txns.plus(ONE_BI)
   pairSixHourData.save()
 
@@ -261,8 +320,8 @@ export function updatePairFiveMinutesData(event: ethereum.Event): PairFiveMinute
       .concat(BigInt.fromI32(previousFiveMinutesID).toString());
   let previousPairFiveMinutesData = PairFiveMinutesData.load(previousFiveMinutesPairID);
 
-  let token0 = Token.load(pair.token0)
-  let token1 = Token.load(pair.token1)
+  let token0 = Token.load(pair!.token0)
+  let token1 = Token.load(pair!.token1)
 
   if (pairFiveMinutesData === null) {
     pairFiveMinutesData = new PairFiveMinutesData(fiveMinutesPairID)
@@ -278,12 +337,22 @@ export function updatePairFiveMinutesData(event: ethereum.Event): PairFiveMinute
     pairFiveMinutesData.priceChange = ZERO_BD
     pairFiveMinutesData.buyTxs = ZERO_BI
     pairFiveMinutesData.sellTxs = ZERO_BI
-    pairFiveMinutesData.basePriceUSD = pair.priceUSD
+    pairFiveMinutesData.basePriceUSD = pair!.priceUSD
     pairFiveMinutesData.buyVolumeUSD = ZERO_BD
     pairFiveMinutesData.sellVolumeUSD = ZERO_BD
+
+    pairFiveMinutesData.time = fiveMinutesStartUnix
+    pairFiveMinutesData.low = pair!.priceUSD
+    pairFiveMinutesData.height = pair!.priceUSD
+    if(previousPairFiveMinutesData !== null){
+      pairFiveMinutesData.open = previousPairFiveMinutesData!.close
+    }else{
+      pairFiveMinutesData.open = pair!.priceUSD
+    }
+    pairFiveMinutesData.close = pair!.priceUSD
   }
 
-  pairFiveMinutesData.priceUSD = pair.priceUSD
+  pairFiveMinutesData.priceUSD = pair!.priceUSD
 
   if (previousPairFiveMinutesData !== null) {
     let previousFiveMinutesVolumeUSD = previousPairFiveMinutesData.volumeUSD;
@@ -298,10 +367,20 @@ export function updatePairFiveMinutesData(event: ethereum.Event): PairFiveMinute
     pairFiveMinutesData.priceChange = calculateChange(pairFiveMinutesData.basePriceUSD, pairFiveMinutesData.priceUSD)
   }
 
-  pairFiveMinutesData.totalSupply = pair.totalSupply
-  pairFiveMinutesData.reserve0 = pair.reserve0
-  pairFiveMinutesData.reserve1 = pair.reserve1
-  pairFiveMinutesData.reserveUSD = pair.reserveUSD
+  if (pair!.priceUSD < pairFiveMinutesData.low){
+    pairFiveMinutesData.low = pair!.priceUSD
+  }
+
+  if (pair!.priceUSD > pairFiveMinutesData.height){
+    pairFiveMinutesData.height = pair!.priceUSD
+  }
+
+  pairFiveMinutesData.close = pair!.priceUSD
+
+  pairFiveMinutesData.totalSupply = pair!.totalSupply
+  pairFiveMinutesData.reserve0 = pair!.reserve0
+  pairFiveMinutesData.reserve1 = pair!.reserve1
+  pairFiveMinutesData.reserveUSD = pair!.reserveUSD
   pairFiveMinutesData.txns = pairFiveMinutesData.txns.plus(ONE_BI)
   pairFiveMinutesData.save()
 
@@ -323,17 +402,17 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     tokenDayData = new TokenDayData(tokenDayID)
     tokenDayData.date = dayStartTimestamp
     tokenDayData.token = token.id
-    tokenDayData.priceUSD = token.derivedETH.times(bundle.ethPrice)
+    tokenDayData.priceUSD = token.derivedETH!.times(bundle!.ethPrice)
     tokenDayData.dailyVolumeToken = ZERO_BD
     tokenDayData.dailyVolumeETH = ZERO_BD
     tokenDayData.dailyVolumeUSD = ZERO_BD
     tokenDayData.dailyTxns = ZERO_BI
     tokenDayData.totalLiquidityUSD = ZERO_BD
   }
-  tokenDayData.priceUSD = token.derivedETH.times(bundle.ethPrice)
+  tokenDayData.priceUSD = token.derivedETH!.times(bundle!.ethPrice)
   tokenDayData.totalLiquidityToken = token.totalLiquidity
   tokenDayData.totalLiquidityETH = token.totalLiquidity.times(token.derivedETH as BigDecimal)
-  tokenDayData.totalLiquidityUSD = tokenDayData.totalLiquidityETH.times(bundle.ethPrice)
+  tokenDayData.totalLiquidityUSD = tokenDayData.totalLiquidityETH.times(bundle!.ethPrice)
   tokenDayData.dailyTxns = tokenDayData.dailyTxns.plus(ONE_BI)
   tokenDayData.save()
 
