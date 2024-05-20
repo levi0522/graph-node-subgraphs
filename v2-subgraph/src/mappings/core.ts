@@ -514,10 +514,10 @@ export function handleSwap(event: Swap): void {
 
   if (isBuy) {
     pair.buyTxs = pair.buyTxs.plus(ONE_BI)
-    pair.buyVolumeUSD = pair.buyVolumeUSD.plus(derivedAmountUSD)
+    pair.buyVolumeUSD = pair.buyVolumeUSD.plus(trackedAmountUSD)
   } else {
     pair.sellTxs = pair.sellTxs.plus(ONE_BI)
-    pair.sellVolumeUSD = pair.sellVolumeUSD.plus(derivedAmountUSD)
+    pair.sellVolumeUSD = pair.sellVolumeUSD.plus(trackedAmountUSD)
   }
   pair.save()
 
@@ -599,10 +599,10 @@ export function handleSwap(event: Swap): void {
   pairDayData.swapTxns = pairDayData.swapTxns.plus(ONE_BI)
   if (isBuy) {
     pairDayData.buyTxs = pairDayData.buyTxs.plus(ONE_BI)
-    pairDayData.buyVolumeUSD = pairDayData.buyVolumeUSD.plus(derivedAmountUSD)
+    pairDayData.buyVolumeUSD = pairDayData.buyVolumeUSD.plus(trackedAmountUSD)
   } else {
     pairDayData.sellTxs = pairDayData.sellTxs.plus(ONE_BI)
-    pairDayData.buyVolumeUSD = pairDayData.buyVolumeUSD.plus(derivedAmountUSD)
+    pairDayData.buyVolumeUSD = pairDayData.buyVolumeUSD.plus(trackedAmountUSD)
   }
   pairDayData.save()
 
@@ -613,10 +613,10 @@ export function handleSwap(event: Swap): void {
   pairHourData.swapTxns = pairHourData.swapTxns.plus(ONE_BI)
   if (isBuy) {
     pairHourData.buyTxs = pairHourData.buyTxs.plus(ONE_BI)
-    pairHourData.buyVolumeUSD = pairHourData.buyVolumeUSD.plus(derivedAmountUSD)
+    pairHourData.buyVolumeUSD = pairHourData.buyVolumeUSD.plus(trackedAmountUSD)
   } else {
     pairHourData.sellTxs = pairHourData.sellTxs.plus(ONE_BI)
-    pairHourData.buyVolumeUSD = pairHourData.buyVolumeUSD.plus(derivedAmountUSD)
+    pairHourData.buyVolumeUSD = pairHourData.buyVolumeUSD.plus(trackedAmountUSD)
   }
   pairHourData.save()
 
@@ -627,10 +627,10 @@ export function handleSwap(event: Swap): void {
   pairSixHourData.swapTxns = pairSixHourData.swapTxns.plus(ONE_BI)
   if (isBuy) {
     pairSixHourData.buyTxs = pairSixHourData.buyTxs.plus(ONE_BI)
-    pairSixHourData.buyVolumeUSD = pairSixHourData.buyVolumeUSD.plus(derivedAmountUSD)
+    pairSixHourData.buyVolumeUSD = pairSixHourData.buyVolumeUSD.plus(trackedAmountUSD)
   } else {
     pairSixHourData.sellTxs = pairSixHourData.sellTxs.plus(ONE_BI)
-    pairSixHourData.buyVolumeUSD = pairSixHourData.buyVolumeUSD.plus(derivedAmountUSD)
+    pairSixHourData.buyVolumeUSD = pairSixHourData.buyVolumeUSD.plus(trackedAmountUSD)
   }
   pairSixHourData.save()
 
@@ -641,10 +641,10 @@ export function handleSwap(event: Swap): void {
   pairFiveMinutesData.swapTxns = pairFiveMinutesData.swapTxns.plus(ONE_BI)
   if (isBuy) {
     pairFiveMinutesData.buyTxs = pairFiveMinutesData.buyTxs.plus(ONE_BI)
-    pairFiveMinutesData.buyVolumeUSD = pairFiveMinutesData.buyVolumeUSD.plus(derivedAmountUSD)
+    pairFiveMinutesData.buyVolumeUSD = pairFiveMinutesData.buyVolumeUSD.plus(trackedAmountUSD)
   } else {
     pairFiveMinutesData.sellTxs = pairFiveMinutesData.sellTxs.plus(ONE_BI)
-    pairFiveMinutesData.buyVolumeUSD = pairFiveMinutesData.buyVolumeUSD.plus(derivedAmountUSD)
+    pairFiveMinutesData.buyVolumeUSD = pairFiveMinutesData.buyVolumeUSD.plus(trackedAmountUSD)
   }
   pairFiveMinutesData.save()
 
