@@ -107,6 +107,7 @@ type Pair @entity {
   pairDayData: [PairDayData!]! @derivedFrom(field: "pair")
   PairSixHourData: [PairSixHourData!]! @derivedFrom(field: "pair")
   PairFiveMinutesData: [PairFiveMinutesData!]! @derivedFrom(field: "pair")
+  PairOneMinutesData: [PairOneMinutesData!]! @derivedFrom(field: "pair")
   liquidityPositions: [LiquidityPosition!]! @derivedFrom(field: "pair")
   liquidityPositionSnapshots: [LiquidityPositionSnapshot!]! @derivedFrom(field: "pair")
   mints: [Mint!]! @derivedFrom(field: "pair")
