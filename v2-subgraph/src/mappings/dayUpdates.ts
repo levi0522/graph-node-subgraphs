@@ -8,7 +8,8 @@ import {
   Token,
   TokenDayData,
   UniswapDayData,
-  UniswapFactory
+  UniswapFactory,
+  PairOneMinutesData
 } from '../types/schema'
 import { PairHourData } from './../types/schema'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './helpers'
@@ -90,7 +91,7 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
 
     pairDayData.time = dayStartTimestamp
     pairDayData.low = pair!.priceUSD
-    pairDayData.height = pair!.priceUSD
+    pairDayData.high = pair!.priceUSD
     if(previousPairDayData !== null){
       pairDayData.open = previousPairDayData!.close
     }else{
@@ -117,8 +118,8 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
     pairDayData.low = pair!.priceUSD
   }
 
-  if (pair!.priceUSD > pairDayData.height){
-    pairDayData.height = pair!.priceUSD
+  if (pair!.priceUSD > pairDayData.high){
+    pairDayData.high = pair!.priceUSD
   }
 
   pairDayData.close = pair!.priceUSD
@@ -173,7 +174,7 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
     pairHourData.sellVolumeUSD = ZERO_BD
     pairHourData.time = hourStartUnix
     pairHourData.low = pair!.priceUSD
-    pairHourData.height = pair!.priceUSD
+    pairHourData.high = pair!.priceUSD
     if(previousPairHourData !== null){
       pairHourData.open = previousPairHourData!.close
     }else{
@@ -201,8 +202,8 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
     pairHourData.low = pair!.priceUSD
   }
 
-  if (pair!.priceUSD > pairHourData.height){
-    pairHourData.height = pair!.priceUSD
+  if (pair!.priceUSD > pairHourData.high){
+    pairHourData.high = pair!.priceUSD
   }
 
   pairHourData.close = pair!.priceUSD
@@ -258,7 +259,7 @@ export function updatePairSixHourData(event: ethereum.Event): PairSixHourData {
 
     pairSixHourData.time = sixHourStartUnix
     pairSixHourData.low = pair!.priceUSD
-    pairSixHourData.height = pair!.priceUSD
+    pairSixHourData.high = pair!.priceUSD
     if(previousPairSixHourData !== null){
       pairSixHourData.open = previousPairSixHourData!.close
     }else{
@@ -286,8 +287,8 @@ export function updatePairSixHourData(event: ethereum.Event): PairSixHourData {
     pairSixHourData.low = pair!.priceUSD
   }
 
-  if (pair!.priceUSD > pairSixHourData.height){
-    pairSixHourData.height = pair!.priceUSD
+  if (pair!.priceUSD > pairSixHourData.high){
+    pairSixHourData.high = pair!.priceUSD
   }
 
   pairSixHourData.close = pair!.priceUSD
@@ -343,7 +344,7 @@ export function updatePairFiveMinutesData(event: ethereum.Event): PairFiveMinute
 
     pairFiveMinutesData.time = fiveMinutesStartUnix
     pairFiveMinutesData.low = pair!.priceUSD
-    pairFiveMinutesData.height = pair!.priceUSD
+    pairFiveMinutesData.high = pair!.priceUSD
     if(previousPairFiveMinutesData !== null){
       pairFiveMinutesData.open = previousPairFiveMinutesData!.close
     }else{
@@ -371,8 +372,8 @@ export function updatePairFiveMinutesData(event: ethereum.Event): PairFiveMinute
     pairFiveMinutesData.low = pair!.priceUSD
   }
 
-  if (pair!.priceUSD > pairFiveMinutesData.height){
-    pairFiveMinutesData.height = pair!.priceUSD
+  if (pair!.priceUSD > pairFiveMinutesData.high){
+    pairFiveMinutesData.high = pair!.priceUSD
   }
 
   pairFiveMinutesData.close = pair!.priceUSD
@@ -385,6 +386,89 @@ export function updatePairFiveMinutesData(event: ethereum.Event): PairFiveMinute
   pairFiveMinutesData.save()
 
   return pairFiveMinutesData as PairFiveMinutesData
+}
+
+export function updatePairOneMinutesData(event: ethereum.Event): PairOneMinutesData {
+  let timestamp = event.block.timestamp.toI32()
+  let oneMinutesIndex = timestamp / 60 // get unique hour within unix history
+  let oneMinutesStartUnix = oneMinutesIndex * 60 // want the rounded effect
+  let oneMinutesPairID = event.address
+      .toHexString()
+      .concat('-')
+      .concat(BigInt.fromI32(oneMinutesIndex).toString())
+  let pair = Pair.load(event.address.toHexString())
+  let pairOneMinutesData = PairOneMinutesData.load(oneMinutesPairID)
+
+  let previousOneMinutesID = oneMinutesIndex - 1;
+  let previousOneMinutesPairID = event.address
+      .toHexString()
+      .concat('-')
+      .concat(BigInt.fromI32(previousOneMinutesID).toString());
+  let previousPairOneMinutesData = PairOneMinutesData.load(previousOneMinutesPairID);
+
+
+  if (pairOneMinutesData === null) {
+    pairOneMinutesData = new PairOneMinutesData(oneMinutesPairID)
+    pairOneMinutesData.startUnix = oneMinutesStartUnix
+    pairOneMinutesData.pair = event.address.toHexString()
+    pairOneMinutesData.volumeToken0 = ZERO_BD
+    pairOneMinutesData.volumeToken1 = ZERO_BD
+    pairOneMinutesData.volumeUSD = ZERO_BD
+    pairOneMinutesData.txns = ZERO_BI
+    pairOneMinutesData.swapTxns = ZERO_BI
+    pairOneMinutesData.volumeChange = ZERO_BD
+    pairOneMinutesData.priceUSD = ZERO_BD
+    pairOneMinutesData.priceChange = ZERO_BD
+    pairOneMinutesData.buyTxs = ZERO_BI
+    pairOneMinutesData.sellTxs = ZERO_BI
+    pairOneMinutesData.basePriceUSD = pair!.priceUSD
+    pairOneMinutesData.buyVolumeUSD = ZERO_BD
+    pairOneMinutesData.sellVolumeUSD = ZERO_BD
+
+    pairOneMinutesData.time = oneMinutesStartUnix
+    pairOneMinutesData.low = pair!.priceUSD
+    pairOneMinutesData.high = pair!.priceUSD
+    if(previousPairOneMinutesData !== null){
+      pairOneMinutesData.open = previousPairOneMinutesData!.close
+    }else{
+      pairOneMinutesData.open = pair!.priceUSD
+    }
+    pairOneMinutesData.close = pair!.priceUSD
+  }
+
+  pairOneMinutesData.priceUSD = pair!.priceUSD
+
+  if (previousPairOneMinutesData !== null) {
+    let previousOneMinutesVolumeUSD = previousPairOneMinutesData.volumeUSD;
+    let currentOneMinutesVolumeUSD = pairOneMinutesData.volumeUSD;
+    let oneMinutesVolumeChange = calculateChange(previousOneMinutesVolumeUSD, currentOneMinutesVolumeUSD);
+    pairOneMinutesData.volumeChange = oneMinutesVolumeChange;
+
+    let previousOneMinutesPriceUSD = previousPairOneMinutesData.priceUSD;
+    let currentOneMinutesPriceUSD = pairOneMinutesData.priceUSD;
+    pairOneMinutesData.priceChange = calculateChange(previousOneMinutesPriceUSD, currentOneMinutesPriceUSD)
+  }else{
+    pairOneMinutesData.priceChange = calculateChange(pairOneMinutesData.basePriceUSD, pairOneMinutesData.priceUSD)
+  }
+
+  if (pair!.priceUSD < pairOneMinutesData.low){
+    pairOneMinutesData.low = pair!.priceUSD
+  }
+
+  if (pair!.priceUSD > pairOneMinutesData.high){
+    pairOneMinutesData.high = pair!.priceUSD
+  }
+
+  pairOneMinutesData.close = pair!.priceUSD
+
+  pairOneMinutesData.totalSupply = pair!.totalSupply
+  pairOneMinutesData.reserve0 = pair!.reserve0
+  pairOneMinutesData.reserve1 = pair!.reserve1
+  pairOneMinutesData.reserveUSD = pair!.reserveUSD
+  pairOneMinutesData.txns = pairOneMinutesData.txns.plus(ONE_BI)
+  pairOneMinutesData.save()
+
+  return pairOneMinutesData as PairOneMinutesData
 }
 
 export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {

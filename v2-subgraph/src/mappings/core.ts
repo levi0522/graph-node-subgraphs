@@ -11,7 +11,7 @@ import {
   Bundle
 } from '../types/schema'
 import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync } from '../types/templates/Pair/Pair'
-import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData, updatePairSixHourData, updatePairFiveMinutesData } from './dayUpdates'
+import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData, updatePairSixHourData, updatePairFiveMinutesData, updatePairOneMinutesData } from './dayUpdates'
 import {
   getEthPriceInUSD,
   findEthPerToken,
@@ -375,6 +375,7 @@ export function handleMint(event: Mint): void {
   updatePairHourData(event)
   updatePairSixHourData(event)
   updatePairFiveMinutesData(event)
+  updatePairOneMinutesData(event)
   updateUniswapDayData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
@@ -445,6 +446,7 @@ export function handleBurn(event: Burn): void {
   updatePairHourData(event)
   updatePairSixHourData(event)
   updatePairFiveMinutesData(event)
+  updatePairOneMinutesData(event)
   updateUniswapDayData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
@@ -582,6 +584,7 @@ export function handleSwap(event: Swap): void {
   let pairHourData = updatePairHourData(event)
   let pairSixHourData = updatePairSixHourData(event)
   let pairFiveMinutesData = updatePairFiveMinutesData(event)
+  let pairOneMinutesData = updatePairOneMinutesData(event)
   let uniswapDayData = updateUniswapDayData(event)
   let token0DayData = updateTokenDayData(token0 as Token, event)
   let token1DayData = updateTokenDayData(token1 as Token, event)
@@ -647,6 +650,20 @@ export function handleSwap(event: Swap): void {
     pairFiveMinutesData.buyVolumeUSD = pairFiveMinutesData.buyVolumeUSD.plus(trackedAmountUSD)
   }
   pairFiveMinutesData.save()
+
+  // update one minutes pair data
+  pairOneMinutesData.volumeToken0 = pairOneMinutesData.volumeToken0.plus(amount0Total)
+  pairOneMinutesData.volumeToken1 = pairOneMinutesData.volumeToken1.plus(amount1Total)
+  pairOneMinutesData.volumeUSD = pairOneMinutesData.volumeUSD.plus(trackedAmountUSD)
+  pairOneMinutesData.swapTxns = pairOneMinutesData.swapTxns.plus(ONE_BI)
+  if (isBuy) {
+    pairOneMinutesData.buyTxs = pairOneMinutesData.buyTxs.plus(ONE_BI)
+    pairOneMinutesData.buyVolumeUSD = pairOneMinutesData.buyVolumeUSD.plus(trackedAmountUSD)
+  } else {
+    pairOneMinutesData.sellTxs = pairOneMinutesData.sellTxs.plus(ONE_BI)
+    pairOneMinutesData.buyVolumeUSD = pairOneMinutesData.buyVolumeUSD.plus(trackedAmountUSD)
+  }
+  pairOneMinutesData.save()
 
   // swap specific updating for token0
   token0DayData.dailyVolumeToken = token0DayData.dailyVolumeToken.plus(amount0Total)

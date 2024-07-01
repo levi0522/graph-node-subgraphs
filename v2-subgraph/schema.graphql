@@ -252,6 +252,44 @@ type UniswapDayData @entity {
   txCount: BigInt!
 }
 
+type PairOneMinutesData @entity {
+  id: ID!
+  startUnix: Int! # unix timestamp for start of hour
+  pair: Pair!
+
+  # reserves
+  reserve0: BigDecimal!
+  reserve1: BigDecimal!
+
+  # total supply for LP historical returns
+  totalSupply: BigDecimal
+
+  # derived liquidity
+  reserveUSD: BigDecimal!
+
+  # volume stats
+  volumeToken0: BigDecimal!
+  volumeToken1: BigDecimal!
+  volumeUSD: BigDecimal!
+  txns: BigInt!
+  priceUSD: BigDecimal!
+  priceChange: BigDecimal!
+  volumeChange: BigDecimal!
+  swapTxns: BigInt!
+  buyTxs: BigInt!
+  sellTxs: BigInt!
+  basePriceUSD: BigDecimal!
+  buyVolumeUSD: BigDecimal!
+  sellVolumeUSD: BigDecimal!
+
+  time: Int!
+  low: BigDecimal!
+  high: BigDecimal!
+  open: BigDecimal!
+  close: BigDecimal!
+}
+
+
 type PairFiveMinutesData @entity {
   id: ID!
   startUnix: Int! # unix timestamp for start of hour
@@ -284,7 +322,7 @@ type PairFiveMinutesData @entity {
 
   time: Int!
   low: BigDecimal!
-  height: BigDecimal!
+  high: BigDecimal!
   open: BigDecimal!
   close: BigDecimal!
 }
@@ -321,7 +359,7 @@ type PairSixHourData @entity {
 
   time: Int!
   low: BigDecimal!
-  height: BigDecimal!
+  high: BigDecimal!
   open: BigDecimal!
   close: BigDecimal!
 }
@@ -358,7 +396,7 @@ type PairHourData @entity {
 
   time: Int!
   low: BigDecimal!
-  height: BigDecimal!
+  high: BigDecimal!
   open: BigDecimal!
   close: BigDecimal!
 }
@@ -398,7 +436,7 @@ type PairDayData @entity {
 
   time: Int!
   low: BigDecimal!
-  height: BigDecimal!
+  high: BigDecimal!
   open: BigDecimal!
   close: BigDecimal!
 }
