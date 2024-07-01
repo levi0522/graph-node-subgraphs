@@ -477,13 +477,13 @@ function getPreviousNonNullPairOneMinutesData(
   currentIndex: number,
   eventAddress: Address
 ): PairOneMinutesData | null {
-  let previousIndex = currentIndex - 1;
+  let previousIndex: i32 = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousOneMinutesPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromI32(previousIndex).toString());
+      .concat(BigInt.fromI32(previousIndex as i32).toString());
     let previousPairOneMinutesData = PairOneMinutesData.load(previousOneMinutesPairID);
 
     if (previousPairOneMinutesData !== null) {
@@ -500,13 +500,13 @@ function getPreviousNonNullPairFiveMinutesData(
   currentIndex: number,
   eventAddress: Address
 ): PairFiveMinutesData | null {
-  let previousIndex = currentIndex - 1;
+  let previousIndex: i32 = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousFiveMinutesPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromI32(previousIndex).toString());
+      .concat(BigInt.fromI32(previousIndex as i32).toString());
     let previousPairFiveMinutesData = PairFiveMinutesData.load(previousFiveMinutesPairID);
 
     if (previousPairFiveMinutesData !== null) {
@@ -523,13 +523,13 @@ function getPreviousNonNullPairSixHourData(
   currentIndex: number,
   eventAddress: Address
 ): PairSixHourData | null {
-  let previousIndex = currentIndex - 1;
+  let previousIndex: i32 = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousSixHourPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromI32(previousIndex).toString());
+      .concat(BigInt.fromI32(previousIndex  as i32).toString());
     let previousPairSixHourData = PairSixHourData.load(previousSixHourPairID);
 
     if (previousPairSixHourData !== null) {
@@ -546,13 +546,13 @@ function getPreviousNonNullPairHourData(
   currentIndex: number,
   eventAddress: Address
 ): PairHourData | null {
-  let previousIndex = currentIndex - 1;
+  let previousIndex: i32 = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousHourPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromI32(previousIndex).toString());
+      .concat(BigInt.fromI32(previousIndex  as i32).toString());
     let previousPairHourData = PairHourData.load(previousHourPairID);
 
     if (previousPairHourData !== null) {
@@ -569,13 +569,13 @@ function getPreviousNonNullPairDayData(
   currentIndex: number,
   eventAddress: Address
 ): PairDayData | null {
-  let previousIndex = currentIndex - 1;
+  let previousIndex: i32 = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousDayPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromI32(previousIndex).toString());
+      .concat(BigInt.fromI32(previousIndex as i32).toString());
     let previousPairDayData = PairDayData.load(previousDayPairID);
 
     if (previousPairDayData !== null) {
