@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { BigDecimal, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
+import { BigDecimal, BigInt, ethereum, log, Address} from '@graphprotocol/graph-ts'
 import {
   Bundle,
   Pair,
@@ -59,15 +59,7 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
     .concat(BigInt.fromI32(dayID).toString())
   let pair = Pair.load(event.address.toHexString())
   let pairDayData = PairDayData.load(dayPairID)
-  let previousDayID = dayID - 1;
-  let previousDayPairID = event.address
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(previousDayID).toString());
-  let previousPairDayData = PairDayData.load(previousDayPairID);
-
-  let token0 = Token.load(pair!.token0)
-  let token1 = Token.load(pair!.token1)
+  let previousPairDayData = getPreviousNonNullPairDayData(dayID, event.address);
 
   if (pairDayData === null) {
     pairDayData = new PairDayData(dayPairID)
@@ -145,15 +137,8 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
   let pair = Pair.load(event.address.toHexString())
   let pairHourData = PairHourData.load(hourPairID)
 
-  let previousHourID = hourIndex - 1;
-  let previousHourPairID = event.address
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(previousHourID).toString());
-  let previousPairHourData = PairHourData.load(previousHourPairID);
+  let previousPairHourData = getPreviousNonNullPairHourData(hourIndex, event.address);
 
-  let token0 = Token.load(pair!.token0)
-  let token1 = Token.load(pair!.token1)
 
   if (pairHourData === null) {
     pairHourData = new PairHourData(hourPairID)
@@ -229,15 +214,7 @@ export function updatePairSixHourData(event: ethereum.Event): PairSixHourData {
   let pair = Pair.load(event.address.toHexString())
   let pairSixHourData = PairSixHourData.load(sixHourPairID)
 
-  let previousSixHourID = sixHourIndex - 1;
-  let previousSixHourPairID = event.address
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(previousSixHourID).toString());
-  let previousPairSixHourData = PairSixHourData.load(previousSixHourPairID);
-
-  let token0 = Token.load(pair!.token0)
-  let token1 = Token.load(pair!.token1)
+  let previousPairSixHourData = getPreviousNonNullPairSixHourData(sixHourIndex, event.address);
 
   if (pairSixHourData === null) {
     pairSixHourData = new PairSixHourData(sixHourPairID)
@@ -314,15 +291,7 @@ export function updatePairFiveMinutesData(event: ethereum.Event): PairFiveMinute
   let pair = Pair.load(event.address.toHexString())
   let pairFiveMinutesData = PairFiveMinutesData.load(fiveMinutesPairID)
 
-  let previousFiveMinutesID = fiveMinutesIndex - 1;
-  let previousFiveMinutesPairID = event.address
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(previousFiveMinutesID).toString());
-  let previousPairFiveMinutesData = PairFiveMinutesData.load(previousFiveMinutesPairID);
-
-  let token0 = Token.load(pair!.token0)
-  let token1 = Token.load(pair!.token1)
+  let previousPairFiveMinutesData = getPreviousNonNullPairFiveMinutesData(fiveMinutesIndex, event.address);
 
   if (pairFiveMinutesData === null) {
     pairFiveMinutesData = new PairFiveMinutesData(fiveMinutesPairID)
@@ -399,12 +368,7 @@ export function updatePairOneMinutesData(event: ethereum.Event): PairOneMinutesD
   let pair = Pair.load(event.address.toHexString())
   let pairOneMinutesData = PairOneMinutesData.load(oneMinutesPairID)
 
-  let previousOneMinutesID = oneMinutesIndex - 1;
-  let previousOneMinutesPairID = event.address
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(previousOneMinutesID).toString());
-  let previousPairOneMinutesData = PairOneMinutesData.load(previousOneMinutesPairID);
+  let previousPairOneMinutesData = getPreviousNonNullPairOneMinutesData(oneMinutesIndex, event.address);
 
 
   if (pairOneMinutesData === null) {
@@ -507,4 +471,119 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
   // updateStoredPairs(tokenDayData as TokenDayData, dayPairID)
 
   return tokenDayData as TokenDayData
+}
+
+function getPreviousNonNullPairOneMinutesData(
+  currentIndex: number,
+  eventAddress: Address
+): PairOneMinutesData | null {
+  let previousIndex = currentIndex - 1;
+
+  while (previousIndex >= 0) {
+    let previousOneMinutesPairID = eventAddress
+      .toHexString()
+      .concat('-')
+      .concat(BigInt.fromI32(previousIndex).toString());
+    let previousPairOneMinutesData = PairOneMinutesData.load(previousOneMinutesPairID);
+
+    if (previousPairOneMinutesData !== null) {
+      return previousPairOneMinutesData;
+    }
+
+    previousIndex -= 1;
+  }
+
+  return null;
+}
+
+function getPreviousNonNullPairFiveMinutesData(
+  currentIndex: number,
+  eventAddress: Address
+): PairFiveMinutesData | null {
+  let previousIndex = currentIndex - 1;
+
+  while (previousIndex >= 0) {
+    let previousFiveMinutesPairID = eventAddress
+      .toHexString()
+      .concat('-')
+      .concat(BigInt.fromI32(previousIndex).toString());
+    let previousPairFiveMinutesData = PairFiveMinutesData.load(previousFiveMinutesPairID);
+
+    if (previousPairFiveMinutesData !== null) {
+      return previousPairFiveMinutesData;
+    }
+
+    previousIndex -= 1;
+  }
+
+  return null;
+}
+
+function getPreviousNonNullPairSixHourData(
+  currentIndex: number,
+  eventAddress: Address
+): PairSixHourData | null {
+  let previousIndex = currentIndex - 1;
+
+  while (previousIndex >= 0) {
+    let previousSixHourPairID = eventAddress
+      .toHexString()
+      .concat('-')
+      .concat(BigInt.fromI32(previousIndex).toString());
+    let previousPairSixHourData = PairSixHourData.load(previousSixHourPairID);
+
+    if (previousPairSixHourData !== null) {
+      return previousPairSixHourData;
+    }
+
+    previousIndex -= 1;
+  }
+
+  return null;
+}
+
+function getPreviousNonNullPairHourData(
+  currentIndex: number,
+  eventAddress: Address
+): PairHourData | null {
+  let previousIndex = currentIndex - 1;
+
+  while (previousIndex >= 0) {
+    let previousHourPairID = eventAddress
+      .toHexString()
+      .concat('-')
+      .concat(BigInt.fromI32(previousIndex).toString());
+    let previousPairHourData = PairHourData.load(previousHourPairID);
+
+    if (previousPairHourData !== null) {
+      return previousPairHourData;
+    }
+
+    previousIndex -= 1;
+  }
+
+  return null;
+}
+
+function getPreviousNonNullPairDayData(
+  currentIndex: number,
+  eventAddress: Address
+): PairDayData | null {
+  let previousIndex = currentIndex - 1;
+
+  while (previousIndex >= 0) {
+    let previousDayPairID = eventAddress
+      .toHexString()
+      .concat('-')
+      .concat(BigInt.fromI32(previousIndex).toString());
+    let previousPairDayData = PairDayData.load(previousDayPairID);
+
+    if (previousPairDayData !== null) {
+      return previousPairDayData;
+    }
+
+    previousIndex -= 1;
+  }
+
+  return null;
 }
