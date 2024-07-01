@@ -483,7 +483,7 @@ function getPreviousNonNullPairOneMinutesData(
     let previousOneMinutesPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromString(previousIndex.toString()).toString());
+      .concat(BigInt.fromI32(previousIndex).toString());
     let previousPairOneMinutesData = PairOneMinutesData.load(previousOneMinutesPairID);
 
     if (previousPairOneMinutesData !== null) {
@@ -506,7 +506,7 @@ function getPreviousNonNullPairFiveMinutesData(
     let previousFiveMinutesPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromString(previousIndex.toString()).toString());
+      .concat(BigInt.fromI32(previousIndex).toString());
     let previousPairFiveMinutesData = PairFiveMinutesData.load(previousFiveMinutesPairID);
 
     if (previousPairFiveMinutesData !== null) {
@@ -529,7 +529,7 @@ function getPreviousNonNullPairSixHourData(
     let previousSixHourPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromString(previousIndex.toString()).toString());
+      .concat(BigInt.fromI32(previousIndex).toString());
     let previousPairSixHourData = PairSixHourData.load(previousSixHourPairID);
 
     if (previousPairSixHourData !== null) {
@@ -552,7 +552,7 @@ function getPreviousNonNullPairHourData(
     let previousHourPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromString(previousIndex.toString()).toString());
+      .concat(BigInt.fromI32(previousIndex).toString());
     let previousPairHourData = PairHourData.load(previousHourPairID);
 
     if (previousPairHourData !== null) {
@@ -575,7 +575,7 @@ function getPreviousNonNullPairDayData(
     let previousDayPairID = eventAddress
       .toHexString()
       .concat('-')
-      .concat(BigInt.fromString(previousIndex.toString()).toString());
+      .concat(BigInt.fromI32(previousIndex).toString());
     let previousPairDayData = PairDayData.load(previousDayPairID);
 
     if (previousPairDayData !== null) {
