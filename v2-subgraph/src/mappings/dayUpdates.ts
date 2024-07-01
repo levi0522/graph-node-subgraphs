@@ -477,7 +477,7 @@ function getPreviousNonNullPairOneMinutesData(
   currentIndex: number,
   eventAddress: Address
 ): PairOneMinutesData | null {
-  let previousIndex: i32 = currentIndex - 1;
+  let previousIndex = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousOneMinutesPairID = eventAddress
@@ -500,7 +500,7 @@ function getPreviousNonNullPairFiveMinutesData(
   currentIndex: number,
   eventAddress: Address
 ): PairFiveMinutesData | null {
-  let previousIndex: i32 = currentIndex - 1;
+  let previousIndex = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousFiveMinutesPairID = eventAddress
@@ -523,7 +523,7 @@ function getPreviousNonNullPairSixHourData(
   currentIndex: number,
   eventAddress: Address
 ): PairSixHourData | null {
-  let previousIndex: i32 = currentIndex - 1;
+  let previousIndex = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousSixHourPairID = eventAddress
@@ -546,7 +546,7 @@ function getPreviousNonNullPairHourData(
   currentIndex: number,
   eventAddress: Address
 ): PairHourData | null {
-  let previousIndex: i32 = currentIndex - 1;
+  let previousIndex = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousHourPairID = eventAddress
@@ -569,7 +569,7 @@ function getPreviousNonNullPairDayData(
   currentIndex: number,
   eventAddress: Address
 ): PairDayData | null {
-  let previousIndex: i32 = currentIndex - 1;
+  let previousIndex = currentIndex - 1;
 
   while (previousIndex >= 0) {
     let previousDayPairID = eventAddress
