@@ -106,8 +106,6 @@ type Pair @entity {
   pairHourData: [PairHourData!]! @derivedFrom(field: "pair")
   pairDayData: [PairDayData!]! @derivedFrom(field: "pair")
   PairSixHourData: [PairSixHourData!]! @derivedFrom(field: "pair")
-  PairFiveMinutesData: [PairFiveMinutesData!]! @derivedFrom(field: "pair")
-  PairOneMinutesData: [PairOneMinutesData!]! @derivedFrom(field: "pair")
   liquidityPositions: [LiquidityPosition!]! @derivedFrom(field: "pair")
   liquidityPositionSnapshots: [LiquidityPositionSnapshot!]! @derivedFrom(field: "pair")
   mints: [Mint!]! @derivedFrom(field: "pair")
@@ -251,81 +249,6 @@ type UniswapDayData @entity {
   totalLiquidityUSD: BigDecimal!
 
   txCount: BigInt!
-}
-
-type PairOneMinutesData @entity {
-  id: ID!
-  startUnix: Int! # unix timestamp for start of hour
-  pair: Pair!
-
-  # reserves
-  reserve0: BigDecimal!
-  reserve1: BigDecimal!
-
-  # total supply for LP historical returns
-  totalSupply: BigDecimal
-
-  # derived liquidity
-  reserveUSD: BigDecimal!
-
-  # volume stats
-  volumeToken0: BigDecimal!
-  volumeToken1: BigDecimal!
-  volumeUSD: BigDecimal!
-  txns: BigInt!
-  priceUSD: BigDecimal!
-  priceChange: BigDecimal!
-  volumeChange: BigDecimal!
-  swapTxns: BigInt!
-  buyTxs: BigInt!
-  sellTxs: BigInt!
-  basePriceUSD: BigDecimal!
-  buyVolumeUSD: BigDecimal!
-  sellVolumeUSD: BigDecimal!
-
-  time: Int!
-  low: BigDecimal!
-  high: BigDecimal!
-  open: BigDecimal!
-  close: BigDecimal!
-}
-
-
-type PairFiveMinutesData @entity {
-  id: ID!
-  startUnix: Int! # unix timestamp for start of hour
-  pair: Pair!
-
-  # reserves
-  reserve0: BigDecimal!
-  reserve1: BigDecimal!
-
-  # total supply for LP historical returns
-  totalSupply: BigDecimal
-
-  # derived liquidity
-  reserveUSD: BigDecimal!
-
-  # volume stats
-  volumeToken0: BigDecimal!
-  volumeToken1: BigDecimal!
-  volumeUSD: BigDecimal!
-  txns: BigInt!
-  priceUSD: BigDecimal!
-  priceChange: BigDecimal!
-  volumeChange: BigDecimal!
-  swapTxns: BigInt!
-  buyTxs: BigInt!
-  sellTxs: BigInt!
-  basePriceUSD: BigDecimal!
-  buyVolumeUSD: BigDecimal!
-  sellVolumeUSD: BigDecimal!
-
-  time: Int!
-  low: BigDecimal!
-  high: BigDecimal!
-  open: BigDecimal!
-  close: BigDecimal!
 }
 
 type PairSixHourData @entity {

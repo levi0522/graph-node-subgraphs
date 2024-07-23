@@ -3,13 +3,12 @@ import { BigDecimal, BigInt, ethereum, log, Address} from '@graphprotocol/graph-
 import {
   Bundle,
   Pair,
-  PairDayData, PairFiveMinutesData,
+  PairDayData,
   PairSixHourData,
   Token,
   TokenDayData,
   UniswapDayData,
   UniswapFactory,
-  PairOneMinutesData
 } from '../types/schema'
 import { PairHourData } from './../types/schema'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './helpers'
@@ -280,160 +279,6 @@ export function updatePairSixHourData(event: ethereum.Event): PairSixHourData {
   return pairSixHourData as PairSixHourData
 }
 
-export function updatePairFiveMinutesData(event: ethereum.Event): PairFiveMinutesData {
-  let timestamp = event.block.timestamp.toI32()
-  let fiveMinutesIndex = timestamp / 300 // get unique hour within unix history
-  let fiveMinutesStartUnix = fiveMinutesIndex * 300 // want the rounded effect
-  let fiveMinutesPairID = event.address
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(fiveMinutesIndex).toString())
-  let pair = Pair.load(event.address.toHexString())
-  let pairFiveMinutesData = PairFiveMinutesData.load(fiveMinutesPairID)
-
-  let previousPairFiveMinutesData = getPreviousNonNullPairFiveMinutesData(fiveMinutesIndex, event.address);
-
-  if (pairFiveMinutesData === null) {
-    pairFiveMinutesData = new PairFiveMinutesData(fiveMinutesPairID)
-    pairFiveMinutesData.startUnix = fiveMinutesStartUnix
-    pairFiveMinutesData.pair = event.address.toHexString()
-    pairFiveMinutesData.volumeToken0 = ZERO_BD
-    pairFiveMinutesData.volumeToken1 = ZERO_BD
-    pairFiveMinutesData.volumeUSD = ZERO_BD
-    pairFiveMinutesData.txns = ZERO_BI
-    pairFiveMinutesData.swapTxns = ZERO_BI
-    pairFiveMinutesData.volumeChange = ZERO_BD
-    pairFiveMinutesData.priceUSD = ZERO_BD
-    pairFiveMinutesData.priceChange = ZERO_BD
-    pairFiveMinutesData.buyTxs = ZERO_BI
-    pairFiveMinutesData.sellTxs = ZERO_BI
-    pairFiveMinutesData.basePriceUSD = pair!.priceUSD
-    pairFiveMinutesData.buyVolumeUSD = ZERO_BD
-    pairFiveMinutesData.sellVolumeUSD = ZERO_BD
-
-    pairFiveMinutesData.time = fiveMinutesStartUnix
-    pairFiveMinutesData.low = pair!.priceUSD
-    pairFiveMinutesData.high = pair!.priceUSD
-    if(previousPairFiveMinutesData !== null){
-      pairFiveMinutesData.open = previousPairFiveMinutesData!.close
-    }else{
-      pairFiveMinutesData.open = pair!.priceUSD
-    }
-    pairFiveMinutesData.close = pair!.priceUSD
-  }
-
-  pairFiveMinutesData.priceUSD = pair!.priceUSD
-
-  if (previousPairFiveMinutesData !== null) {
-    let previousFiveMinutesVolumeUSD = previousPairFiveMinutesData.volumeUSD;
-    let currentFiveMinutesVolumeUSD = pairFiveMinutesData.volumeUSD;
-    let fiveMinutesVolumeChange = calculateChange(previousFiveMinutesVolumeUSD, currentFiveMinutesVolumeUSD);
-    pairFiveMinutesData.volumeChange = fiveMinutesVolumeChange;
-
-    let previousFiveMinutesPriceUSD = previousPairFiveMinutesData.priceUSD;
-    let currentFiveMinutesPriceUSD = pairFiveMinutesData.priceUSD;
-    pairFiveMinutesData.priceChange = calculateChange(previousFiveMinutesPriceUSD, currentFiveMinutesPriceUSD)
-  }else{
-    pairFiveMinutesData.priceChange = calculateChange(pairFiveMinutesData.basePriceUSD, pairFiveMinutesData.priceUSD)
-  }
-
-  if (pair!.priceUSD < pairFiveMinutesData.low){
-    pairFiveMinutesData.low = pair!.priceUSD
-  }
-
-  if (pair!.priceUSD > pairFiveMinutesData.high){
-    pairFiveMinutesData.high = pair!.priceUSD
-  }
-
-  pairFiveMinutesData.close = pair!.priceUSD
-
-  pairFiveMinutesData.totalSupply = pair!.totalSupply
-  pairFiveMinutesData.reserve0 = pair!.reserve0
-  pairFiveMinutesData.reserve1 = pair!.reserve1
-  pairFiveMinutesData.reserveUSD = pair!.reserveUSD
-  pairFiveMinutesData.txns = pairFiveMinutesData.txns.plus(ONE_BI)
-  pairFiveMinutesData.save()
-
-  return pairFiveMinutesData as PairFiveMinutesData
-}
-
-export function updatePairOneMinutesData(event: ethereum.Event): PairOneMinutesData {
-  let timestamp = event.block.timestamp.toI32()
-  let oneMinutesIndex = timestamp / 60 // get unique hour within unix history
-  let oneMinutesStartUnix = oneMinutesIndex * 60 // want the rounded effect
-  let oneMinutesPairID = event.address
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(oneMinutesIndex).toString())
-  let pair = Pair.load(event.address.toHexString())
-  let pairOneMinutesData = PairOneMinutesData.load(oneMinutesPairID)
-
-  let previousPairOneMinutesData = getPreviousNonNullPairOneMinutesData(oneMinutesIndex, event.address);
-
-  if (pairOneMinutesData === null) {
-    pairOneMinutesData = new PairOneMinutesData(oneMinutesPairID)
-    pairOneMinutesData.startUnix = oneMinutesStartUnix
-    pairOneMinutesData.pair = event.address.toHexString()
-    pairOneMinutesData.volumeToken0 = ZERO_BD
-    pairOneMinutesData.volumeToken1 = ZERO_BD
-    pairOneMinutesData.volumeUSD = ZERO_BD
-    pairOneMinutesData.txns = ZERO_BI
-    pairOneMinutesData.swapTxns = ZERO_BI
-    pairOneMinutesData.volumeChange = ZERO_BD
-    pairOneMinutesData.priceUSD = ZERO_BD
-    pairOneMinutesData.priceChange = ZERO_BD
-    pairOneMinutesData.buyTxs = ZERO_BI
-    pairOneMinutesData.sellTxs = ZERO_BI
-    pairOneMinutesData.basePriceUSD = pair!.priceUSD
-    pairOneMinutesData.buyVolumeUSD = ZERO_BD
-    pairOneMinutesData.sellVolumeUSD = ZERO_BD
-
-    pairOneMinutesData.time = oneMinutesStartUnix
-    pairOneMinutesData.low = pair!.priceUSD
-    pairOneMinutesData.high = pair!.priceUSD
-    if(previousPairOneMinutesData !== null){
-      pairOneMinutesData.open = previousPairOneMinutesData!.close
-    }else{
-      pairOneMinutesData.open = pair!.priceUSD
-    }
-    pairOneMinutesData.close = pair!.priceUSD
-  }
-
-  pairOneMinutesData.priceUSD = pair!.priceUSD
-
-  if (previousPairOneMinutesData !== null) {
-    let previousOneMinutesVolumeUSD = previousPairOneMinutesData.volumeUSD;
-    let currentOneMinutesVolumeUSD = pairOneMinutesData.volumeUSD;
-    let oneMinutesVolumeChange = calculateChange(previousOneMinutesVolumeUSD, currentOneMinutesVolumeUSD);
-    pairOneMinutesData.volumeChange = oneMinutesVolumeChange;
-
-    let previousOneMinutesPriceUSD = previousPairOneMinutesData.priceUSD;
-    let currentOneMinutesPriceUSD = pairOneMinutesData.priceUSD;
-    pairOneMinutesData.priceChange = calculateChange(previousOneMinutesPriceUSD, currentOneMinutesPriceUSD)
-  }else{
-    pairOneMinutesData.priceChange = calculateChange(pairOneMinutesData.basePriceUSD, pairOneMinutesData.priceUSD)
-  }
-
-  if (pair!.priceUSD < pairOneMinutesData.low){
-    pairOneMinutesData.low = pair!.priceUSD
-  }
-
-  if (pair!.priceUSD > pairOneMinutesData.high){
-    pairOneMinutesData.high = pair!.priceUSD
-  }
-
-  pairOneMinutesData.close = pair!.priceUSD
-
-  pairOneMinutesData.totalSupply = pair!.totalSupply
-  pairOneMinutesData.reserve0 = pair!.reserve0
-  pairOneMinutesData.reserve1 = pair!.reserve1
-  pairOneMinutesData.reserveUSD = pair!.reserveUSD
-  pairOneMinutesData.txns = pairOneMinutesData.txns.plus(ONE_BI)
-  pairOneMinutesData.save()
-
-  return pairOneMinutesData as PairOneMinutesData
-}
-
 export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDayData {
   let bundle = Bundle.load('1')
   let timestamp = event.block.timestamp.toI32()
@@ -470,56 +315,6 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
   // updateStoredPairs(tokenDayData as TokenDayData, dayPairID)
 
   return tokenDayData as TokenDayData
-}
-
-function getPreviousNonNullPairOneMinutesData(
-  currentIndex: number,
-  eventAddress: Address
-): PairOneMinutesData | null {
-  let previousIndex = currentIndex - 1;
-  let maxStepsBack = 1000;
-
-  while (previousIndex >= 0  && maxStepsBack > 0) {
-    let previousOneMinutesPairID = eventAddress
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(previousIndex as i32).toString());
-    let previousPairOneMinutesData = PairOneMinutesData.load(previousOneMinutesPairID);
-
-    if (previousPairOneMinutesData !== null) {
-      return previousPairOneMinutesData;
-    }
-
-    previousIndex -= 1;
-    maxStepsBack -= 1;
-  }
-
-  return null;
-}
-
-function getPreviousNonNullPairFiveMinutesData(
-  currentIndex: number,
-  eventAddress: Address
-): PairFiveMinutesData | null {
-  let previousIndex = currentIndex - 1;
-  let maxStepsBack = 1000;
-
-  while (previousIndex >= 0  && maxStepsBack > 0) {
-    let previousFiveMinutesPairID = eventAddress
-      .toHexString()
-      .concat('-')
-      .concat(BigInt.fromI32(previousIndex as i32).toString());
-    let previousPairFiveMinutesData = PairFiveMinutesData.load(previousFiveMinutesPairID);
-
-    if (previousPairFiveMinutesData !== null) {
-      return previousPairFiveMinutesData;
-    }
-
-    previousIndex -= 1;
-    maxStepsBack -= 1;
-  }
-
-  return null;
 }
 
 function getPreviousNonNullPairSixHourData(
